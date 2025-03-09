@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { string } = require("zod");
 
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
@@ -33,6 +34,10 @@ const orderSchema = new Schema({
     phone: {
       type: String,
       required: true, 
+    },
+    tokenNo: {
+         type: String,
+         required: true
     },
     orderItems: [
       {
@@ -134,15 +139,35 @@ const menuSchema = new Schema({
     isAvailable: { type: Boolean, default: true },
     updatedBy: { type: ObjectId, ref: "Admin" },
 });
+  
+const tokenCounterSchema = new Schema ({
+  name: { type: String, required: true, unique: true },
+  current: { type: Number, default: 0 }
+});
+
+const canteenSettingsSchema = new Schema({
+  openTime: { 
+    type: String, // Format: "HH:MM" (24-hour format)
+    required: true 
+  },
+  closeTime: { 
+    type: String, 
+    required: true 
+  }
+});
 
 const userModel = mongoose.model("User", userSchema);
 const adminModel = mongoose.model("Admin", adminSchema);
 const menuModel = mongoose.model("Menu", menuSchema);
 const orderModel = mongoose.model("Order", orderSchema);
+const tokenConterModel = mongoose.model('TokenCounter', tokenCounterSchema);
+const canteenSettingsModel = mongoose.model('canteenSettings', canteenSettingsSchema )
 
 module.exports = {
     userModel,
     adminModel,
     menuModel,
-    orderModel
+    orderModel,
+    tokenConterModel,
+    canteenSettingsModel
 };

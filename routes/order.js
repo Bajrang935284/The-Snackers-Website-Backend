@@ -3,7 +3,7 @@
 // Place Order (with user verification)
 const express = require('express');
 const orderRouter = express.Router();
-const { menuModel, orderModel } = require("../db");
+const { menuModel, orderModel,tokenConterModel } = require("../db");
 const authenticateUser = require("../middlewares/user")
 
 // Place Order (with user verification)
@@ -44,12 +44,28 @@ orderRouter.post('/place-order', authenticateUser, async (req, res) => {
       (total, item) => total + (item.price * item.quantity), 
       0
     );
+     
+    let tokenCounter = await tokenConterModel.findOneAndUpdate(
+      { name: 'orderToken' },
+      { $inc: { current: 1 } },
+      { new: true, upsert: true }
+    );
+
+    let tokenNo = tokenCounter.current;
+
+    // Reset token to 1 if it exceeds 100
+    if (tokenNo > 100) {
+      tokenNo = 1;
+      tokenCounter.current = 1;
+      await tokenCounter.save();
+    }
 
     // Create order
     const newOrder = await orderModel.create({
       userId,
       orderItems: processedItems,
       totalAmount,
+      tokenNo: tokenNo.toString(),
       phone,
       deliveryDetails: {
         type: deliveryDetails.type,
@@ -61,7 +77,8 @@ orderRouter.post('/place-order', authenticateUser, async (req, res) => {
     res.status(201).json({
       message: 'Order placed successfully',
       orderId: newOrder._id,
-      totalAmount
+      totalAmount,
+      tokenNo: newOrder.tokenNo
     });
 
   } catch (error) {
