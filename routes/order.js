@@ -21,9 +21,7 @@ orderRouter.post('/place-order', authenticateUser, async (req, res) => {
       return res.status(400).json({ message: 'Hostel name is required for delivery' });
     }
 
-    if (deliveryDetails.type === 'pickup' && !deliveryDetails.pickupTime) {
-      return res.status(400).json({ message: 'Pickup time is required for pickup' });
-    }
+    
 
     // Process order items (FIXED: Added closing ) for Promise.all)
     const processedItems = await Promise.all(
@@ -69,8 +67,8 @@ orderRouter.post('/place-order', authenticateUser, async (req, res) => {
       phone,
       deliveryDetails: {
         type: deliveryDetails.type,
-        hostelName: deliveryDetails.hostelName || null,
-        pickupTime: deliveryDetails.pickupTime || null
+        hostelName: deliveryDetails.hostelName || null
+        
       }
     });
 

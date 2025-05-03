@@ -15,6 +15,8 @@ const userSchema = new Schema({
       unique: true, 
       match: [/^\d{10}$/, "Please enter a valid 10-digit phone number"] 
     },
+    resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
 
 // Admin Schema
@@ -96,12 +98,6 @@ const orderSchema = new Schema({
         required: function() {
           return this.deliveryDetails.type === "delivery";
         } 
-      },
-      pickupTime: { 
-        type: Date,
-        required: function() {
-          return this.deliveryDetails.type === "pickup";
-        }
       }
     },
     paymentStatus: {
@@ -146,22 +142,37 @@ const tokenCounterSchema = new Schema ({
 });
 
 const canteenSettingsSchema = new Schema({
-  openTime: { 
-    type: String, // Format: "HH:MM" (24-hour format)
-    required: true 
+  openTime: {
+    type: String,
+    required: true,
+    default: "09:00"    
   },
-  closeTime: { 
-    type: String, 
-    required: true 
+  closeTime: {
+    type: String,
+    required: true,
+    default: "03:00"    
+  },
+  deliveryAvailable: {
+    type: Boolean,
+    default: true
+  },
+  pickupAvailable: {
+    type: Boolean,
+    default: true
   }
+}, {
+  timestamps: true
 });
+
+
 
 const userModel = mongoose.model("User", userSchema);
 const adminModel = mongoose.model("Admin", adminSchema);
 const menuModel = mongoose.model("Menu", menuSchema);
 const orderModel = mongoose.model("Order", orderSchema);
 const tokenConterModel = mongoose.model('TokenCounter', tokenCounterSchema);
-const canteenSettingsModel = mongoose.model('canteenSettings', canteenSettingsSchema )
+const canteenSettingsModel = mongoose.model('canteenSettings', canteenSettingsSchema );
+
 
 module.exports = {
     userModel,
@@ -169,5 +180,6 @@ module.exports = {
     menuModel,
     orderModel,
     tokenConterModel,
-    canteenSettingsModel
+    canteenSettingsModel,
+   
 };
