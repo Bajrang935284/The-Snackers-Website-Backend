@@ -63,6 +63,13 @@ app.use((err, req, res, next) => {
   });
 });
 
+
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
 // Handle 404 routes
 app.use('*', (req, res) => {
   res.status(404).json({
@@ -72,9 +79,7 @@ app.use('*', (req, res) => {
 });
 
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+
 // Graceful server shutdown for AWS
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
