@@ -1,5 +1,4 @@
-// server.js
-// Load environment variables based on NODE_ENV
+
 require('dotenv').config({
   path: process.env.NODE_ENV === 'production' ? '.env.production' : '.env'
 });
@@ -72,6 +71,10 @@ app.use('*', (req, res) => {
   });
 });
 
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 // Graceful server shutdown for AWS
 process.on('SIGTERM', () => {
   console.log('SIGTERM signal received: closing HTTP server');
