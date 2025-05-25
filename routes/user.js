@@ -144,7 +144,7 @@ userRouter.post("/forgot-password", async function(req, res) {
     
     // Email options
     const mailOptions = {
-      from: process.env.EMAIL_USERNAME || 'bbana15102004@gmail.com',
+      from: process.env.EMAIL_USERNAME || 'thesnackers31@gmail.com',
       to: user.email,
       subject: 'Password Reset Request',
       html: `

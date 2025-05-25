@@ -23,7 +23,7 @@ app.use(express.json()); // Parse JSON request bodies
 
 // CORS configuration - Enhanced for production
 const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? [process.env.FRONTEND_URL || 'https://yourdomain.com'] // Use env var or fallback to your domain
+  ? [process.env.FRONTEND_URL, 'https://www.thesnackers.in'] 
   : ['http://localhost:5173', 'http://192.168.1.39:5173']; 
 
 app.use(cors({
