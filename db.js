@@ -126,6 +126,44 @@ const orderSchema = new Schema({
     this.updatedAt = Date.now(); // Update timestamp on every save
     next();
   });
+
+
+  const walkInOrderSchema = new Schema({
+  tokenNo: {
+    type: String,
+    required: true
+  },
+  orderItems: [
+    {
+      name: {
+        type: String,
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true
+      },
+      price: {
+        type: Number,
+        required: true
+      }
+    }
+  ],
+  totalAmount: {
+    type: Number,
+    required: true
+  },
+  createdAt: { 
+      type: Date, 
+      default: Date.now 
+    },
+  orderType: {
+    type: String,
+    
+    default: "dine In"
+  }
+});
+
 // Menu Schema
 const menuSchema = new Schema({
     title: { type: String, required: true },
@@ -138,7 +176,7 @@ const menuSchema = new Schema({
   
 const tokenCounterSchema = new Schema ({
   name: { type: String, required: true, unique: true },
-  current: { type: Number, default: 0 }
+  current: { type: Number, default: 1 }
 });
 
 const canteenSettingsSchema = new Schema({
@@ -172,7 +210,7 @@ const menuModel = mongoose.model("Menu", menuSchema);
 const orderModel = mongoose.model("Order", orderSchema);
 const tokenConterModel = mongoose.model('TokenCounter', tokenCounterSchema);
 const canteenSettingsModel = mongoose.model('canteenSettings', canteenSettingsSchema );
-
+const walkInOrderModel = mongoose.model('WalkInOrder', walkInOrderSchema)
 
 module.exports = {
     userModel,
@@ -181,5 +219,5 @@ module.exports = {
     orderModel,
     tokenConterModel,
     canteenSettingsModel,
-   
+   walkInOrderModel
 };

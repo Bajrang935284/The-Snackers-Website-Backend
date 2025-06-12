@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { adminModel,orderModel} = require("../db");
+const { adminModel,orderModel,tokenConterModel,walkInOrderModel} = require("../db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { JWT_ADMIN_PASSWORD } = require("../config");
@@ -101,6 +101,57 @@ adminRouter.get("/auth/me", async function(req, res) {
 });
 
 
+adminRouter.post('/walkin-order',async (req, res) => {
+  try {
+    const { orderItems } = req.body;
+
+    if (!orderItems || !Array.isArray(orderItems) || orderItems.length === 0) {
+      return res.status(400).json({ message: 'Order items are required' });
+    }
+
+    // Calculate totalAmount
+    const totalAmount = orderItems.reduce((total, item) => {
+      if (!item.name || !item.quantity || !item.price) {
+        throw new Error('Invalid item format. Name, quantity, and price are required.');
+      }
+      return total + (item.quantity * item.price);
+    }, 0);
+
+    // Get next token number (shared with online orders)
+    let tokenCounter = await tokenConterModel.findOneAndUpdate(
+      { name: 'orderToken' },
+      { $inc: { current: 1 } },
+      { new: true, upsert: true }
+    );
+
+    let tokenNo = tokenCounter.current;
+
+    if (tokenNo > 100) {
+      tokenNo = 1;
+      tokenCounter.current = 1;
+      await tokenCounter.save();
+    }
+
+    // Create walk-in order
+    const newWalkInOrder = await walkInOrderModel.create({
+      tokenNo: tokenNo.toString(),
+      orderItems,
+      totalAmount,
+      orderType: 'dine In'
+    });
+
+    res.status(201).json({
+      message: 'Walk-in order placed successfully',
+      orderId: newWalkInOrder._id,
+      tokenNo: newWalkInOrder.tokenNo,
+      totalAmount
+    });
+
+  } catch (error) {
+    console.error('Walk-in order error:', error);
+    res.status(500).json({ message: 'Walk-in order failed', error: error.message });
+  }
+});
 
 
 adminRouter.get("/orders",adminMiddleware, async (req, res) => {

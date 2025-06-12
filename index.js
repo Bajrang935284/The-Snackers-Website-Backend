@@ -22,9 +22,9 @@ const app = express();
 app.use(express.json()); // Parse JSON request bodies
 
 // CORS configuration - Enhanced for production
-const allowedOrigins = process.env.NODE_ENV === 'production' 
-  ? [process.env.FRONTEND_URL, 'https://www.thesnackers.in'] 
-  : ['http://localhost:5173', 'http://192.168.1.39:5173']; 
+// process.env.NODE_ENV === 'production' 
+//   ? [process.env.FRONTEND_URL, 'https://www.thesnackers.in'] 
+const allowedOrigins =  ['http://localhost:5173', 'http://192.168.1.53:5173']; 
 
 app.use(cors({
   origin: allowedOrigins,
